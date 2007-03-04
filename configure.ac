@@ -29,6 +29,13 @@ fi
 AC_SUBST([GITREV])
 dnl }}}
 
+dnl dependencies
+PKG_CHECK_MODULES(PACKAGE, [gtk+-2.0 gdk-2.0 cairo])
+AC_SUBST(PACKAGE_CFLAGS)
+AC_SUBST(PACKAGE_LIBS)
+
+
+
 dnl Makefile generation
 AC_OUTPUT(
 		  Makefile
