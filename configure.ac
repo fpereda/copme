@@ -29,12 +29,43 @@ fi
 AC_SUBST([GITREV])
 dnl }}}
 
+dnl CFLAGS
+AC_DEFUN([CHECK_CFLAG], [
+                  save_CFLAGS=$CFLAGS
+                  CFLAGS="$CFLAGS $LSYS_CFLAGS $1 -Werror"
+                  AC_COMPILE_IFELSE([
+#include <stdio.h>
+int main(int argc, char **argv)
+{
+        char *s = "test";
+        printf("%s.\n", s);
+        return 0;
+}
+                  ],
+                  [cflag_success=yes],
+                  [cflag_success=no])
+                  CFLAGS="$save_CFLAGS"
+                  if test "x$cflag_success" = "xyes" ; then
+                          LSYS_CFLAGS="$LSYS_CFLAGS $1"
+                          cflags_message="${cflags_message} $1"
+                  fi
+                  ])
+AC_MSG_CHECKING([for appropiate compiler flags])
+CHECK_CFLAG([-Wall])
+CHECK_CFLAG([-Wextra])
+CHECK_CFLAG([-Winit-self])
+CHECK_CFLAG([-Wredundant-decls])
+CHECK_CFLAG([-Winline])
+CHECK_CFLAG([-Wunused-function])
+CHECK_CFLAG([-Wunreachable-code])
+CHECK_CFLAG([-Wshadow])
+AC_MSG_RESULT([${cflags_message}])
+AC_SUBST([LSYS_CFLAGS])
+
 dnl dependencies
 PKG_CHECK_MODULES(PACKAGE, [gtk+-2.0 gdk-2.0 cairo])
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
-
-
 
 dnl Makefile generation
 AC_OUTPUT(
