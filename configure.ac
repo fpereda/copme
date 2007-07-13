@@ -9,6 +9,7 @@ dnl Basic stuff
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_PROG_RANLIB
 
 dnl {{{ Info about this build
 BUILDUSER=`whoami`
@@ -71,4 +72,6 @@ dnl Makefile generation
 AC_OUTPUT(
 		  Makefile
 		  src/Makefile
+		  test/Makefile
+		  test/ctme/Makefile
 		  )
