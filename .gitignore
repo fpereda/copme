@@ -1,7 +1,17 @@
+# Typical C products
 *.o
 *.a
+
+# Autotools stuff
 Makefile
 Makefile.in
 configure
 *~
 *.swp
+.deps
+.libs
+aclocal.m4
+config.log
+config.status
+autom4te.cache
+config
