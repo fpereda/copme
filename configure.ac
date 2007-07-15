@@ -71,9 +71,9 @@ AC_SUBST(PACKAGE_LIBS)
 dnl Makefile generation
 AC_OUTPUT(
 		  Makefile
+		  ctme/Makefile
 		  lsys/Makefile
 		  lsysutil/Makefile
 		  src/Makefile
 		  test/Makefile
-		  test/ctme/Makefile
 		  )
