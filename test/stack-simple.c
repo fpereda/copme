@@ -31,7 +31,7 @@
 
 #include <ctme/ctme.h>
 
-#include "stack.h"
+#include <lsysutil/stack.h>
 
 #define SIZEOF_ARRAY(a) (sizeof(a)/sizeof(a[0]))
 

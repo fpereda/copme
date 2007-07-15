@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CFLAGS = @LSYS_CFLAGS@
 
-INCLUDES = -I$(top_srcdir)/src -I.
+INCLUDES = -I. -I$(top_srcdir)
 
 SUBDIRS = ctme .
 
@@ -15,6 +15,6 @@ check_PROGRAMS = stack-simple
 COMMONLDADD = ctme/libctme.a
 
 stack_simple_SOURCES = stack-simple.c
-stack_simple_LDADD = $(COMMONLDADD) $(top_builddir)/src/libstack.a
+stack_simple_LDADD = $(COMMONLDADD) $(top_builddir)/lsysutil/liblsysutil.a
 
 # vim: set et:
