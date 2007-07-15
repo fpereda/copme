@@ -74,6 +74,6 @@ AC_OUTPUT(
 		  ctme/Makefile
 		  lsys/Makefile
 		  lsysutil/Makefile
+		  lsysutil/test/Makefile
 		  src/Makefile
-		  test/Makefile
 		  )
