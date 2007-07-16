@@ -64,13 +64,31 @@ void run_test(void)
 	struct copme_long *o_multi = copme_option_named(opts, "multi");
 	struct copme_long *o_optional = copme_option_named(opts, "optional");
 
+	CTME_CHECK_NOT_NULL(o_help);
+	CTME_CHECK_NOT_NULL(o_multi);
+	CTME_CHECK_NOT_NULL(o_optional);
+
 	struct copme_long *o_nothing = copme_option_named(opts, "idonotexist");
 
-#define CHECK_NOT_NULL(a) CTME_CHECK((a) != NULL)
+	CTME_CHECK_NULL(o_nothing);
 
-	CHECK_NOT_NULL(o_help);
-	CHECK_NOT_NULL(o_multi);
-	CHECK_NOT_NULL(o_optional);
+	int targc = 1;
+	char *targv[] = {
+		"something",
+		NULL
+	};
+	struct copme_state *st = copme_init(opts, targc, targv);
 
-	CTME_CHECK_EQUAL(o_nothing, NULL);
+	CTME_CHECK_NOT_NULL(st);
+
+	struct copme_long *o;
+	for (o = opts; o->lname; o++) {
+		CTME_CHECK_EQUAL(o->specified, 0);
+		if (o->arg) {
+			CTME_CHECK_EQUAL(o->arg->specified, 0);
+			CTME_CHECK_NULL(o->arg->data);
+		}
+	}
+
+	free(st);
 }

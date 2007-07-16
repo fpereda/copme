@@ -19,4 +19,8 @@ void run_test(void)
 	CTME_CHECK_EQUAL(t, 0);
 
 	CTME_CHECK_EQUAL_STRING("same string", "same string");
+
+	CTME_CHECK_NOT_EQUAL(1, 2);
+	CTME_CHECK_NULL(0);
+	CTME_CHECK_NOT_NULL(&t);
 }

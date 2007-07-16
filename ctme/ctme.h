@@ -52,6 +52,9 @@ unsigned int ctme_ntests;
 } while (0)
 
 #define CTME_CHECK_EQUAL(a, b) CTME_CHECK(a == b)
+#define CTME_CHECK_NOT_EQUAL(a, b) CTME_CHECK(a != b)
+#define CTME_CHECK_NULL(a) CTME_CHECK((a) == NULL)
+#define CTME_CHECK_NOT_NULL(a) CTME_CHECK((a) != NULL)
 
 #define CTME_CHECK_EQUAL_STRING(a, b) do { \
 	if (strcmp((a), (b)) != 0) { \
