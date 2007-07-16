@@ -28,9 +28,16 @@ if test -d "$GIT_DIR"; then
 		GITREV=`GIT_DIR=$GIT_DIR git rev-parse --short HEAD`
 	fi
 else
-	GITREV=
+	GITREV="not available"
 fi
 AC_SUBST([GITREV])
+PKG_PROG_PKG_CONFIG
+CAIRO_VERSION=`$PKG_CONFIG --modversion cairo`
+AC_SUBST([CAIRO_VERSION])
+GTK2_VERSION=`$PKG_CONFIG --modversion gtk+-2.0`
+AC_SUBST([GTK2_VERSION])
+GDK2_VERSION=`$PKG_CONFIG --modversion gdk-2.0`
+AC_SUBST([GDK2_VERSION])
 dnl }}}
 
 dnl CFLAGS
