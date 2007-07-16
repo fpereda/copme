@@ -108,8 +108,13 @@ copme_init(struct copme_long *opts, int argc, char *argv[])
 	st->argv = argv;
 	st->argind = 0;
 
-	for (struct copme_long *o = st->opts; o->lname; o++)
+	for (struct copme_long *o = st->opts; o->lname; o++) {
 		o->specified = 0;
+		if (o->arg) {
+			o->arg->specified = 0;
+			o->arg->data = NULL;
+		}
+	}
 
 	return st;
 }

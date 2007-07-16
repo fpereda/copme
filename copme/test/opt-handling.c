@@ -46,10 +46,10 @@ int repeat(void)
 
 void run_test(void)
 {
-	struct copme_arg a_depth = {0, 0};
-	struct copme_arg a_axiom = {0, 0};
-	struct copme_arg a_multi = {0, 0};
-	struct copme_arg a_optional = {0, 0};
+	struct copme_arg a_depth;
+	struct copme_arg a_axiom;
+	struct copme_arg a_multi;
+	struct copme_arg a_optional;
 
 	struct copme_long opts[] = {
 		{"depth", 'd', "Depth of the L-System", COPME_HASARG, &a_depth},
