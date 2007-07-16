@@ -12,6 +12,9 @@ AC_PROG_LN_S
 AC_PROG_RANLIB
 
 dnl {{{ Info about this build
+GENERATED_FILE=misc/generated-file.txt
+AC_SUBST_FILE(GENERATED_FILE)
+
 BUILDUSER=`whoami`
 AC_SUBST([BUILDUSER])
 BUILDHOST=`hostname`
@@ -21,7 +24,7 @@ AC_SUBST([BUILDDATE])
 GIT_DIR="${ac_top_srcdir:-./}/.git"
 if test -d "$GIT_DIR"; then
 	GITREV=`GIT_DIR=$GIT_DIR git describe 2>/dev/null`
-	if test "x$GITVERSION" = "x"; then
+	if test "x$GITREV" = "x"; then
 		GITREV=`GIT_DIR=$GIT_DIR git rev-parse --short HEAD`
 	fi
 else
@@ -77,5 +80,6 @@ AC_OUTPUT(
 		  lsys/Makefile
 		  lsysutil/Makefile
 		  lsysutil/test/Makefile
+		  src/about.h
 		  src/Makefile
 		  )
