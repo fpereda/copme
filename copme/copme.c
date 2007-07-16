@@ -67,10 +67,14 @@ struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
 	return NULL;
 }
 
-void copme_usage(struct copme_state *st)
+void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
 {
 	static const int desc = 25;
-	printf("Usage:\n");
+
+	if (pre)
+		pre();
+
+	printf("Options:\n");
 	for (struct copme_long *o = st->opts; o->lname; o++) {
 		unsigned totlen = 0;
 		totlen += 4;
@@ -89,6 +93,9 @@ void copme_usage(struct copme_state *st)
 			putchar(' ');
 		printf("%s\n", o->desc);
 	}
+
+	if (post)
+		post();
 }
 
 struct copme_state *

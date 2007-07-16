@@ -68,7 +68,8 @@ struct copme_state *
 copme_init(struct copme_long opts[], int argc, char *argv[]);
 
 void copme_next(struct copme_state *st);
-void copme_usage(struct copme_state *st);
+void copme_usage(struct copme_state *st,
+		void (*pre)(void), void (*post)(void));
 
 static inline unsigned copme_finished(struct copme_state *st)
 {
