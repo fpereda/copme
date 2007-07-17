@@ -1,15 +1,35 @@
 dnl vim: set sw=4 sts=4 ts=4 noet ft=config foldmethod=marker foldmarker={{{,}}} :
 dnl Basic setup
-AC_INIT(lsys, [0.1], ferdy@gentoo.org, lsys)
 AC_PREREQ(2.59)
+AC_INIT([lsys/lsys.h])
 AC_CONFIG_AUX_DIR(config)
-AM_INIT_AUTOMAKE(lsys, 0.1)
 
-dnl Basic stuff
+VERSION_MAJOR=0
+VERSION_MINOR=1
+VERSION_MICRO=0
+VERSION_FULL="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_MICRO"
+VERSION="$VERSION_FULL"
+
+AC_SUBST([VERSION_MAJOR])
+AC_SUBST([VERSION_MINOR])
+AC_SUBST([VERSION_MICRO])
+AC_SUBST([VERSION_FULL])
+
+AM_INIT_AUTOMAKE(lsys, [$VERSION_FULL])
+
+dnl {{{ Basic toolchain stuff
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
+AC_PROG_LIBTOOL
 AC_PROG_RANLIB
+AC_STDC_HEADERS
+AC_PROG_MAKE_SET
+dnl }}}
+
+dnl {{{ obtain PKG_CONFIG
+PKG_PROG_PKG_CONFIG([0.9.0])
+dnl }}}
 
 dnl {{{ Info about this build
 GENERATED_FILE=misc/generated-file.txt
@@ -31,7 +51,6 @@ else
 	GITREV="not available"
 fi
 AC_SUBST([GITREV])
-PKG_PROG_PKG_CONFIG
 CAIRO_VERSION=`$PKG_CONFIG --modversion cairo`
 AC_SUBST([CAIRO_VERSION])
 GTK2_VERSION=`$PKG_CONFIG --modversion gtk+-2.0`
@@ -74,9 +93,9 @@ AC_MSG_RESULT([${cflags_message}])
 AC_SUBST([LSYS_CFLAGS])
 
 dnl dependencies
-PKG_CHECK_MODULES(PACKAGE, [gtk+-2.0 gdk-2.0 cairo])
-AC_SUBST(PACKAGE_CFLAGS)
-AC_SUBST(PACKAGE_LIBS)
+PKG_CHECK_MODULES(GTK2CAIRO, [gtk+-2.0 gdk-2.0 cairo])
+AC_SUBST(GTK2CAIRO_CFLAGS)
+AC_SUBST(GTK2CAIRO_LIBS)
 
 dnl Makefile generation
 AC_OUTPUT(
