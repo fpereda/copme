@@ -16,6 +16,7 @@ AC_SUBST([VERSION_MICRO])
 AC_SUBST([VERSION_FULL])
 
 AM_INIT_AUTOMAKE(lsys, [$VERSION_FULL])
+AC_LANG([C])
 
 dnl {{{ Basic toolchain stuff
 AC_PROG_CC
