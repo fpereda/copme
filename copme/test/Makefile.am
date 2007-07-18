@@ -8,9 +8,9 @@ INCLUDES = -I. -I$(top_srcdir)
 SUBDIRS = .
 
 TESTS_ENVIRONMENT = env
-TESTS = opt-handling basic-no-arg hasarg
+TESTS = opt-handling basic-no-arg hasarg optarg
 
-check_PROGRAMS = opt-handling basic-no-arg hasarg
+check_PROGRAMS = opt-handling basic-no-arg hasarg optarg
 
 COMMONLDADD = $(top_builddir)/ctme/libctme.a \
               $(top_builddir)/copme/libcopme.a
@@ -23,5 +23,8 @@ basic_no_arg_LDADD   = $(COMMONLDADD)
 
 hasarg_SOURCES = hasarg.c
 hasarg_LDADD   = $(COMMONLDADD)
+
+optarg_SOURCES = optarg.c
+optarg_LDADD   = $(COMMONLDADD)
 
 # vim: set et:
