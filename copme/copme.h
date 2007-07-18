@@ -32,6 +32,12 @@
 #ifndef __COPME_H
 #define __COPME_H 1
 
+#if defined(__GNUC__)
+#    define COPME_ATTRIBUTE(x) __attribute__((x))
+#else
+#    define COPME_ATTRIBUTE(x)
+#endif
+
 struct copme_arg {
 	char *data;
 	unsigned specified : 1;

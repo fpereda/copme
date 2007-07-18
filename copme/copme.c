@@ -50,6 +50,12 @@ static inline char *paramornull(char *s)
 	return s;
 }
 
+static inline COPME_ATTRIBUTE(noreturn) void oom(void)
+{
+	fprintf(stderr, "Out of memory.\n");
+	abort();
+}
+
 struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
 {
 	for (struct copme_long *o = opts; o->lname; o++)
@@ -93,6 +99,8 @@ struct copme_state *
 copme_init(struct copme_long *opts, int argc, char *argv[])
 {
 	struct copme_state *st = malloc(sizeof(*st));
+	if (!st)
+		oom();
 
 	st->opts = opts;
 	st->argc = argc;
