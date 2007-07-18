@@ -50,15 +50,6 @@ static inline char *paramornull(char *s)
 	return s;
 }
 
-static inline char get_shortopt(char *rawarg)
-{
-	if (rawarg[0] && rawarg[0] == '-'
-			&& rawarg[1] && rawarg[1] != '-'
-			&& !rawarg[2])
-		return rawarg[1];
-	return 0;
-}
-
 struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
 {
 	for (struct copme_long *o = opts; o->lname; o++)
@@ -106,7 +97,11 @@ copme_init(struct copme_long *opts, int argc, char *argv[])
 	st->opts = opts;
 	st->argc = argc;
 	st->argv = argv;
+	st->curopt = -1;
+	st->curarg = NULL;
 	st->argind = 0;
+	st->error = 0;
+	st->finished = 0;
 
 	for (struct copme_long *o = st->opts; o->lname; o++) {
 		o->specified = 0;
@@ -132,12 +127,24 @@ void copme_next(struct copme_state *state)
 		return;
 
 	char *rawarg = state->argv[state->argind];
-	char *curarg = skipminus(rawarg);
-	char shortopt = get_shortopt(rawarg);
+	char *curarg = NULL;
+	char shortopt = 0;
+	int lenraw = strlen(rawarg);
+
+	if (lenraw == 2 && rawarg[0] == '-' && rawarg[1] != '-')
+		shortopt = rawarg[1];
+	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] == '-')
+		curarg = skipminus(rawarg);
+
+	/* This is neither a short nor a long option */
+	/* FIXME: Should store these pointers... */
+	if (curarg == NULL && shortopt == 0)
+		return;
 
 	for (struct copme_long *o = state->opts; o->lname; o++) {
-		if (strcmp(o->lname, curarg) != 0
-				&& (shortopt == 0 || shortopt != o->sname))
+		if (curarg && strcmp(o->lname, curarg) != 0)
+			continue;
+		if (shortopt && shortopt != o->sname)
 			continue;
 
 		o->specified++;
