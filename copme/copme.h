@@ -29,8 +29,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __COPME_H
-#define __COPME_H 1
+#ifndef COPME_GUARD_COPME_H
+#define COPME_GUARD_COPME_H 1
 
 #if defined(__GNUC__)
 #    define COPME_ATTRIBUTE(x) __attribute__((x))
