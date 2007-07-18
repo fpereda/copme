@@ -45,7 +45,7 @@ static inline char *skipminus(char *s)
 
 static inline char *paramornull(char *s)
 {
-	if (*s == '-')
+	if (s == NULL || *s == '-')
 		return NULL;
 	return s;
 }
@@ -141,8 +141,18 @@ void copme_next(struct copme_state *state)
 	if (curarg == NULL && shortopt == 0)
 		return;
 
+	char *equal = NULL;
+	if (curarg)
+		equal = strchr(curarg, '=');
+
+	int lencmp = equal ? equal - curarg : lenraw - 2;
+
+	char *nextarg = equal
+		? equal + 1
+		: paramornull(state->argv[state->argind + 1]);
+
 	for (struct copme_long *o = state->opts; o->lname; o++) {
-		if (curarg && strcmp(o->lname, curarg) != 0)
+		if (curarg && strncmp(o->lname, curarg, lencmp) != 0)
 			continue;
 		if (shortopt && shortopt != o->sname)
 			continue;
@@ -152,21 +162,17 @@ void copme_next(struct copme_state *state)
 
 		if (o->arg_kind == COPME_NOARG)
 			state->curarg = NULL;
+		else if (o->arg_kind == COPME_OPTARG && nextarg)
+			state->curarg = nextarg;
 		else if (o->arg_kind == COPME_HASARG) {
-			state->argind++;
-			if (state->argind >= state->argc
-					|| state->argv[state->argind][0] == '-') {
-				fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
-				goto err;
-			}
-			state->curarg = state->argv[state->argind];
-		} else if (o->arg_kind == COPME_OPTARG) {
-			state->argind++;
-			if (state->argind < state->argc)
-				state->curarg = paramornull(state->argv[state->argind]);
-			if (state->curarg == NULL)
-				state->argind--;
+			if (!nextarg)
+				goto needarg;
+			state->curarg = nextarg;
 		}
+
+		if ((o->arg_kind == COPME_HASARG || o->arg_kind == COPME_OPTARG)
+				&& nextarg && ! equal)
+			state->argind++;
 
 		if (o->arg != NULL) {
 			o->arg->specified = (state->curarg != NULL);
@@ -177,6 +183,10 @@ void copme_next(struct copme_state *state)
 	}
 
 	fprintf(stderr, "Unkown option '%s'\n", curarg);
+	goto err;
+needarg:
+	fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
+	goto err;
 err:
 	state->error = 1;
 }
