@@ -1,5 +1,5 @@
 dnl vim: set sw=4 sts=4 ts=4 noet ft=config foldmethod=marker foldmarker={{{,}}} :
-dnl Basic setup
+dnl {{{ Basic setup
 AC_PREREQ(2.59)
 AC_INIT([lsys/lsys.h])
 AC_CONFIG_AUX_DIR(config)
@@ -17,6 +17,7 @@ AC_SUBST([VERSION_FULL])
 
 AM_INIT_AUTOMAKE(lsys, [$VERSION_FULL])
 AC_LANG([C])
+dnl }}}
 
 dnl {{{ Basic toolchain stuff
 AC_PROG_CC
@@ -60,7 +61,7 @@ GDK2_VERSION=`$PKG_CONFIG --modversion gdk-2.0`
 AC_SUBST([GDK2_VERSION])
 dnl }}}
 
-dnl CFLAGS
+dnl {{{ CFLAGS
 AC_DEFUN([CHECK_CFLAG], [
                   save_CFLAGS=$CFLAGS
                   CFLAGS="$CFLAGS $LSYS_CFLAGS $1 -Werror"
@@ -92,13 +93,16 @@ CHECK_CFLAG([-Wunused-function])
 CHECK_CFLAG([-Wshadow])
 AC_MSG_RESULT([${cflags_message}])
 AC_SUBST([LSYS_CFLAGS])
+dnl }}}
 
-dnl dependencies
-PKG_CHECK_MODULES(GTK2CAIRO, [gtk+-2.0 gdk-2.0 cairo])
-AC_SUBST(GTK2CAIRO_CFLAGS)
-AC_SUBST(GTK2CAIRO_LIBS)
+dnl {{{ Gtk and cairo dependencies
+PKG_CHECK_MODULES([gtk], [gtk+-2.0 >= 2.8])
+PKG_CHECK_MODULES([gdk], [gdk-2.0])
+PKG_CHECK_MODULES([cairo], [cairo >= 1.4.4])
+dnl }}}
 
-dnl Makefile generation
+dnl {{{ output
+AC_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 		  Makefile
 		  copme/Makefile
@@ -110,3 +114,4 @@ AC_OUTPUT(
 		  src/about.h
 		  src/Makefile
 		  )
+dnl }}}

@@ -1,7 +1,7 @@
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_CFLAGS = $(LSYS_CFLAGS) -std=c99
+AM_CFLAGS = @LSYS_CFLAGS@ -std=c99
 
 SUBDIRS = . test
 
