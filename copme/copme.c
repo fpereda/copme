@@ -190,7 +190,10 @@ void copme_next(struct copme_state *state)
 		return;
 	}
 
-	fprintf(stderr, "Unkown option '%s'\n", curarg);
+	if (curarg)
+		fprintf(stderr, "Unknown option '%s'\n", curarg);
+	else
+		fprintf(stderr, "Unknown option '%c'\n", shortopt);
 	goto err;
 needarg:
 	fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
