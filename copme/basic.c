@@ -79,7 +79,7 @@ struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
 
 void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
 {
-	static const int desc = 25;
+	static const unsigned desc = 25;
 
 	if (pre)
 		pre();
@@ -101,7 +101,7 @@ void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
 		}
 		while (n--)
 			putchar(' ');
-		printf("%s\n", o->desc);
+		printf("%s\n", o->desc ? o->desc : "No help available.");
 	}
 
 	if (post)
