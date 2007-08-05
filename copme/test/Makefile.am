@@ -8,9 +8,19 @@ INCLUDES = -I. -I$(top_srcdir)
 SUBDIRS = .
 
 TESTS_ENVIRONMENT = env
-TESTS = opt-handling basic-no-arg hasarg optarg
+TESTS = \
+        opt-handling \
+        basic-no-arg \
+        hasarg \
+        optarg \
+        basic-multishort
 
-check_PROGRAMS = opt-handling basic-no-arg hasarg optarg
+check_PROGRAMS = \
+                 opt-handling \
+                 basic-no-arg \
+                 hasarg \
+                 optarg \
+                 basic-multishort
 
 COMMONLDADD = $(top_builddir)/ctme/libctme.a \
               $(top_builddir)/copme/libcopme.a
@@ -26,5 +36,8 @@ hasarg_LDADD   = $(COMMONLDADD)
 
 optarg_SOURCES = optarg.c
 optarg_LDADD   = $(COMMONLDADD)
+
+basic_multishort_SOURCES = basic-multishort.c
+basic_multishort_LDADD   = $(COMMONLDADD)
 
 # vim: set et:

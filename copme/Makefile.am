@@ -7,7 +7,7 @@ SUBDIRS = . test
 
 lib_LIBRARIES = libcopme.a
 
-libcopme_a_SOURCES = copme.c copme.h
+libcopme_a_SOURCES = basic.c next.c copme.h
 
 libcopme_includedir = $(includedir)/copme/
 libcopme_include_HEADERS = copme.h

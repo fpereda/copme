@@ -36,90 +36,11 @@
 
 #include "copme.h"
 
-static inline char *skipminus(char *s)
-{
-	while (*s == '-')
-		s++;
-	return s;
-}
-
 static inline char *paramornull(char *s)
 {
 	if (s == NULL || *s == '-')
 		return NULL;
 	return s;
-}
-
-static inline COPME_ATTRIBUTE(noreturn) void oom(void)
-{
-	fprintf(stderr, "Out of memory.\n");
-	abort();
-}
-
-struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
-{
-	for (struct copme_long *o = opts; o->lname; o++)
-		if (strcmp(o->lname, lname) == 0)
-			return o;
-	return NULL;
-}
-
-void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
-{
-	static const int desc = 25;
-
-	if (pre)
-		pre();
-
-	printf("Options:\n");
-	for (struct copme_long *o = st->opts; o->lname; o++) {
-		unsigned totlen = 0;
-		totlen += 4;
-		totlen += strlen(o->lname);
-		if (o->sname != 0)
-			totlen += 4;
-		printf("  --%s", o->lname);
-		if (o->sname != 0)
-			printf(", -%c", o->sname);
-		unsigned n = desc - totlen;
-		if (totlen >= desc) {
-			n = desc;
-			putchar('\n');
-		}
-		while (n--)
-			putchar(' ');
-		printf("%s\n", o->desc);
-	}
-
-	if (post)
-		post();
-}
-
-struct copme_state *
-copme_init(struct copme_long *opts, int argc, char *argv[])
-{
-	struct copme_state *st = malloc(sizeof(*st));
-	if (!st)
-		oom();
-
-	st->opts = opts;
-	st->argc = argc;
-	st->argv = argv;
-	st->curopt = -1;
-	st->curarg = NULL;
-	st->argind = 0;
-	st->error = 0;
-	st->finished = 0;
-
-	for (struct copme_long *o = st->opts; o->lname; o++) {
-		o->specified = 0;
-		if (o->arg) {
-			o->arg->specified = 0;
-			o->arg->data = NULL;
-		}
-	}
-
-	return st;
 }
 
 void copme_next(struct copme_state *state)
@@ -136,17 +57,20 @@ void copme_next(struct copme_state *state)
 
 	char *rawarg = state->argv[state->argind];
 	char *curarg = NULL;
+	char *multishort = NULL;
 	char shortopt = 0;
-	int lenraw = strlen(rawarg);
+	size_t lenraw = strlen(rawarg);
 
 	if (lenraw == 2 && rawarg[0] == '-' && rawarg[1] != '-')
 		shortopt = rawarg[1];
 	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] == '-')
-		curarg = skipminus(rawarg);
+		curarg = rawarg + 2;
+	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] != '-')
+		multishort = rawarg + 1;
 
 	/* This is neither a short nor a long option */
 	/* FIXME: Should store these pointers... */
-	if (curarg == NULL && shortopt == 0)
+	if (curarg == NULL && shortopt == 0 && multishort == NULL)
 		return;
 
 	char *equal = NULL;
@@ -155,14 +79,20 @@ void copme_next(struct copme_state *state)
 
 	int lencmp = equal ? equal - curarg : lenraw - 2;
 
-	char *nextarg = equal
-		? equal + 1
-		: paramornull(state->argv[state->argind + 1]);
+	char *nextarg = NULL;
+	if (multishort)
+		nextarg = NULL;
+	else if (equal)
+		nextarg = equal + 1;
+	else
+		nextarg = paramornull(state->argv[state->argind + 1]);
 
 	for (struct copme_long *o = state->opts; o->lname; o++) {
 		if (curarg && strncmp(o->lname, curarg, lencmp) != 0)
 			continue;
 		if (shortopt && shortopt != o->sname)
+			continue;
+		if (multishort && *multishort != o->sname)
 			continue;
 
 		o->specified++;
@@ -187,13 +117,21 @@ void copme_next(struct copme_state *state)
 			o->arg->data = state->curarg;
 		}
 
-		return;
+		if (multishort && *(++multishort))
+			/* 'o++' will give us state->opts when we enter the loop. */
+			o = state->opts - 1;
+		else
+			return;
 	}
 
 	if (curarg)
-		fprintf(stderr, "Unknown option '%s'\n", curarg);
+		fprintf(stderr, "Unknown long option '%s'\n", curarg);
+	else if (multishort)
+		fprintf(stderr,
+				"Unknown short option '%c'(%d). Part of multishort.\n",
+				*multishort, *multishort);
 	else
-		fprintf(stderr, "Unknown option '%c'\n", shortopt);
+		fprintf(stderr, "Unknown short option '%c'\n", shortopt);
 	goto err;
 needarg:
 	fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
