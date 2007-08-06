@@ -134,7 +134,10 @@ void copme_next(struct copme_state *state)
 		fprintf(stderr, "Unknown short option '%c'\n", shortopt);
 	goto err;
 needarg:
-	fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
+	if (curarg)
+		fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
+	else
+		fprintf(stderr, "Option '%c' needs an argument.\n", shortopt);
 	goto err;
 err:
 	state->error = 1;
