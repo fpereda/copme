@@ -113,5 +113,6 @@ AC_OUTPUT(
 		  lsysutil/test/Makefile
 		  src/about.h
 		  src/Makefile
+		  src/test/Makefile
 		  )
 dnl }}}
