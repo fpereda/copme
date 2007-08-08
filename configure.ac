@@ -98,7 +98,7 @@ dnl }}}
 dnl {{{ Gtk and cairo dependencies
 PKG_CHECK_MODULES([gtk], [gtk+-2.0 >= 2.8])
 PKG_CHECK_MODULES([gdk], [gdk-2.0])
-PKG_CHECK_MODULES([cairo], [cairo >= 1.4.4])
+PKG_CHECK_MODULES([cairo], [cairo >= 1.2])
 dnl }}}
 
 dnl {{{ output
