@@ -23,7 +23,7 @@ check_PROGRAMS = \
                  basic-multishort
 
 COMMONLDADD = $(top_builddir)/ctme/libctme.a \
-              $(top_builddir)/copme/libcopme.a
+              $(top_builddir)/copme/libcopme.la
 
 opt_handling_SOURCES = opt-handling.c
 opt_handling_LDADD   = $(COMMONLDADD)

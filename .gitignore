@@ -8,6 +8,8 @@ Makefile.in
 configure
 *~
 *.swp
+*.lo
+*.la
 .deps
 .libs
 aclocal.m4
