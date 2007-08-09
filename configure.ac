@@ -1,7 +1,7 @@
 dnl vim: set sw=4 sts=4 ts=4 noet ft=config foldmethod=marker foldmarker={{{,}}} :
 dnl {{{ Basic setup
 AC_PREREQ(2.59)
-AC_INIT([lsys/lsys.h])
+AC_INIT([copme/copme.h])
 AC_CONFIG_AUX_DIR(config)
 
 VERSION_MAJOR=0
@@ -15,7 +15,7 @@ AC_SUBST([VERSION_MINOR])
 AC_SUBST([VERSION_MICRO])
 AC_SUBST([VERSION_FULL])
 
-AM_INIT_AUTOMAKE(lsys, [$VERSION_FULL])
+AM_INIT_AUTOMAKE(copme, [$VERSION_FULL])
 AC_LANG([C])
 dnl }}}
 
@@ -29,13 +29,9 @@ AC_STDC_HEADERS
 AC_PROG_MAKE_SET
 dnl }}}
 
-dnl {{{ obtain PKG_CONFIG
-PKG_PROG_PKG_CONFIG([0.9.0])
-dnl }}}
-
 dnl {{{ Info about this build
-GENERATED_FILE=misc/generated-file.txt
-AC_SUBST_FILE(GENERATED_FILE)
+dnl GENERATED_FILE=misc/generated-file.txt
+dnl AC_SUBST_FILE(GENERATED_FILE)
 
 BUILDUSER=`whoami`
 AC_SUBST([BUILDUSER])
@@ -53,12 +49,6 @@ else
 	GITREV="not available"
 fi
 AC_SUBST([GITREV])
-CAIRO_VERSION=`$PKG_CONFIG --modversion cairo`
-AC_SUBST([CAIRO_VERSION])
-GTK2_VERSION=`$PKG_CONFIG --modversion gtk+-2.0`
-AC_SUBST([GTK2_VERSION])
-GDK2_VERSION=`$PKG_CONFIG --modversion gdk-2.0`
-AC_SUBST([GDK2_VERSION])
 dnl }}}
 
 dnl {{{ CFLAGS
@@ -95,12 +85,6 @@ AC_MSG_RESULT([${cflags_message}])
 AC_SUBST([LSYS_CFLAGS])
 dnl }}}
 
-dnl {{{ Gtk and cairo dependencies
-PKG_CHECK_MODULES([gtk], [gtk+-2.0 >= 2.8])
-PKG_CHECK_MODULES([gdk], [gdk-2.0])
-PKG_CHECK_MODULES([cairo], [cairo >= 1.2])
-dnl }}}
-
 dnl {{{ output
 AC_CONFIG_HEADER(config.h)
 AC_OUTPUT(
@@ -108,11 +92,5 @@ AC_OUTPUT(
 		  copme/Makefile
 		  copme/test/Makefile
 		  ctme/Makefile
-		  lsys/Makefile
-		  lsysutil/Makefile
-		  lsysutil/test/Makefile
-		  src/about.h
-		  src/Makefile
-		  src/test/Makefile
 		  )
 dnl }}}
