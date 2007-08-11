@@ -38,6 +38,16 @@
 #    define COPME_ATTRIBUTE(x)
 #endif
 
+#define copme_foreach_group(s, g) \
+	for (struct copme_group *g = (s)->groups; g->sdesc; g++)
+
+#define copme_foreach_option(g, o) \
+	for (struct copme_long *o = (g)->opts; o->lname; o++)
+
+#define copme_foreach_group_option(s, g, o) \
+	copme_foreach_group(s, g) \
+		copme_foreach_option(g, o)
+
 struct copme_arg {
 	char *data;
 	unsigned specified : 1;

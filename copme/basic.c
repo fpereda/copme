@@ -58,13 +58,11 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 	st->error = 0;
 	st->finished = 0;
 
-	for (struct copme_group *g = st->groups; g->sdesc; g++) {
-		for (struct copme_long *o = g->opts; o->lname; o++) {
-			o->specified = 0;
-			if (o->arg) {
-				o->arg->specified = 0;
-				o->arg->data = NULL;
-			}
+	copme_foreach_group_option(st, g, o) {
+		o->specified = 0;
+		if (o->arg) {
+			o->arg->specified = 0;
+			o->arg->data = NULL;
 		}
 	}
 
@@ -74,7 +72,7 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 struct copme_long *copme_option_named(struct copme_group *groups, char *lname)
 {
 	for (struct copme_group *g = groups; g->sdesc; g++)
-		for (struct copme_long *o = g->opts; o->lname; o++)
+		copme_foreach_option(g, o)
 			if (strcmp(o->lname, lname) == 0)
 				return o;
 	return NULL;
@@ -87,9 +85,9 @@ void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
 	if (pre)
 		pre();
 
-	for (struct copme_group *g = st->groups; g->sdesc; g++) {
+	copme_foreach_group(st, g) {
 		printf("%s:\n", g->sdesc);
-		for (struct copme_long *o = g->opts; o->lname; o++) {
+		copme_foreach_option(g, o) {
 			unsigned totlen = 0;
 			totlen += 4;
 			totlen += strlen(o->lname);

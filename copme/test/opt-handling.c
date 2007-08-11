@@ -86,8 +86,7 @@ void run_test(void)
 
 	CTME_CHECK_NOT_NULL(st);
 
-	struct copme_long *o;
-	for (o = opts; o->lname; o++) {
+	copme_foreach_option(groups, o) {
 		CTME_CHECK_EQUAL(o->specified, 0);
 		if (o->arg) {
 			CTME_CHECK_EQUAL(o->arg->specified, 0);
