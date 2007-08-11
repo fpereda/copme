@@ -46,17 +46,12 @@ int repeat(void)
 
 void run_test(void)
 {
-	struct copme_arg a_depth;
-	struct copme_arg a_axiom;
-	struct copme_arg a_multi;
-	struct copme_arg a_optional;
-
 	struct copme_long opts[] = {
-		{"depth", 'd', "Depth of the L-System", COPME_HASARG, &a_depth},
-		{"axiom", 'a', "Axiom of the L-System", COPME_HASARG, &a_axiom},
-		{"multi", 'm', "Specify multiple times", COPME_HASARG, &a_multi},
-		{"optional", 'o', "Optional argument", COPME_OPTARG, &a_optional},
-		{"help" , 'h', "Display this help information", COPME_NOARG, 0},
+		{"depth", 'd', "Depth of the L-System", COPME_HASARG},
+		{"axiom", 'a', "Axiom of the L-System", COPME_HASARG},
+		{"multi", 'm', "Specify multiple times", COPME_HASARG},
+		{"optional", 'o', "Optional argument", COPME_OPTARG},
+		{"help" , 'h', "Display this help information", COPME_NOARG},
 		{0, 0, 0, 0, 0}
 	};
 
@@ -88,11 +83,11 @@ void run_test(void)
 
 	copme_foreach_option(groups, o) {
 		CTME_CHECK_EQUAL(o->specified, 0);
-		if (o->arg) {
-			CTME_CHECK_EQUAL(o->arg->specified, 0);
-			CTME_CHECK_NULL(o->arg->data);
-		}
+		if (o->arg_kind == COPME_NOARG)
+			continue;
+		CTME_CHECK_EQUAL(o->arg->specified, 0);
+		CTME_CHECK_NULL(o->arg->data);
 	}
 
-	free(st);
+	copme_free(st);
 }

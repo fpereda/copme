@@ -48,11 +48,9 @@ int repeat(void)
 
 void run_test(void)
 {
-	struct copme_arg a_two;
-
 	struct copme_long opts[] = {
-		{"one", 'o', "First opt", COPME_NOARG, 0},
-		{"two", 't', "Second opt", COPME_HASARG, &a_two},
+		{"one", 'o', "First opt", COPME_NOARG},
+		{"two", 't', "Second opt", COPME_HASARG},
 		{0, 0, 0, 0, 0}
 	};
 
@@ -87,10 +85,10 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "something");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "something");
 
-	free(st);
+	copme_free(st);
 
 	char *targv2[] = {
 		"program",
@@ -111,10 +109,10 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified == 1);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "one");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "one");
 
-	free(st);
+	copme_free(st);
 
 	char *targv3[] = {
 		"program",
@@ -138,8 +136,8 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(o_one->specified);
 	CTME_CHECK(o_two->specified == 2);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "two");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "two");
 
-	free(st);
+	copme_free(st);
 }

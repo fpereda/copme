@@ -35,19 +35,21 @@
 #include <string.h>
 
 #include "copme.h"
+#include "xfuncs.h"
 
-static inline COPME_ATTRIBUTE(noreturn) void oom(void)
+void copme_free(struct copme_state *st)
 {
-	fprintf(stderr, "Out of memory.\n");
-	abort();
+	copme_foreach_group_option(st, g, o) {
+		if (o->arg)
+			free(o->arg);
+	}
+	free(st);
 }
 
 struct copme_state *
 copme_init(struct copme_group *groups, int argc, char *argv[])
 {
-	struct copme_state *st = malloc(sizeof(*st));
-	if (!st)
-		oom();
+	struct copme_state *st = xmalloc(sizeof(*st));
 
 	st->groups = groups;
 	st->argc = argc;
@@ -60,10 +62,11 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 
 	copme_foreach_group_option(st, g, o) {
 		o->specified = 0;
-		if (o->arg) {
-			o->arg->specified = 0;
-			o->arg->data = NULL;
-		}
+		if (o->arg_kind == COPME_NOARG)
+			continue;
+		o->arg = xmalloc(sizeof(*o->arg));
+		o->arg->specified = 0;
+		o->arg->data = NULL;
 	}
 
 	return st;

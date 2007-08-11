@@ -32,12 +32,6 @@
 #ifndef COPME_GUARD_COPME_H
 #define COPME_GUARD_COPME_H 1
 
-#if defined(__GNUC__)
-#    define COPME_ATTRIBUTE(x) __attribute__((x))
-#else
-#    define COPME_ATTRIBUTE(x)
-#endif
-
 #define copme_foreach_group(s, g) \
 	for (struct copme_group *g = (s)->groups; g->sdesc; g++)
 
@@ -88,6 +82,8 @@ copme_option_named(struct copme_group *groups, char *lname);
 
 struct copme_state *
 copme_init(struct copme_group groups[], int argc, char *argv[]);
+
+void copme_free(struct copme_state *st);
 
 void copme_next(struct copme_state *st);
 void copme_usage(struct copme_state *st,

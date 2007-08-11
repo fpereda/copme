@@ -49,8 +49,8 @@ int repeat(void)
 void run_test(void)
 {
 	struct copme_long opts[] = {
-		{"one", 'o', "First opt", COPME_NOARG, 0},
-		{"two", 't', "Second opt", COPME_NOARG, 0},
+		{"one", 'o', "First opt", COPME_NOARG},
+		{"two", 't', "Second opt", COPME_NOARG},
 		{0, 0, 0, 0, 0}
 	};
 
@@ -85,7 +85,7 @@ void run_test(void)
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified);
 
-	free(st);
+	copme_free(st);
 
 	char *targv2[] = {
 		"program",
@@ -109,5 +109,5 @@ void run_test(void)
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified == 2);
 
-	free(st);
+	copme_free(st);
 }

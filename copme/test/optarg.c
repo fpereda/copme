@@ -48,13 +48,10 @@ int repeat(void)
 
 void run_test(void)
 {
-	struct copme_arg a_two;
-	struct copme_arg a_three;
-
 	struct copme_long opts[] = {
-		{"one", 'o', "First opt", COPME_NOARG, 0},
-		{"two", 't', "Second opt", COPME_HASARG, &a_two},
-		{"three", 'r', "Third opt", COPME_OPTARG, &a_three},
+		{"one", 'o', "First opt", COPME_NOARG},
+		{"two", 't', "Second opt", COPME_HASARG},
+		{"three", 'r', "Third opt", COPME_OPTARG},
 		{0, 0, 0, 0, 0}
 	};
 
@@ -90,12 +87,12 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "something");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "something");
 	CTME_CHECK(o_three->specified);
-	CTME_CHECK(! a_three.specified);
+	CTME_CHECK(! o_three->arg->specified);
 
-	free(st);
+	copme_free(st);
 
 	char *targv2[] = {
 		"program",
@@ -117,13 +114,13 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(! o_one->specified);
 	CTME_CHECK(o_two->specified == 1);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "one");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "one");
 	CTME_CHECK(o_three->specified);
-	CTME_CHECK(a_three.specified);
-	CTME_CHECK_EQUAL_STRING(a_three.data, "blah");
+	CTME_CHECK(o_three->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_three->arg->data, "blah");
 
-	free(st);
+	copme_free(st);
 
 	char *targv3[] = {
 		"program",
@@ -149,13 +146,13 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(o_one->specified);
 	CTME_CHECK(o_two->specified == 2);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "two");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "two");
 	CTME_CHECK(o_three->specified);
-	CTME_CHECK(a_three.specified);
-	CTME_CHECK_EQUAL_STRING(a_three.data, "gulp");
+	CTME_CHECK(o_three->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_three->arg->data, "gulp");
 
-	free(st);
+	copme_free(st);
 
 	char *targv4[] = {
 		"program",
@@ -182,11 +179,11 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(o_one->specified);
 	CTME_CHECK(o_two->specified == 2);
-	CTME_CHECK(a_two.specified);
-	CTME_CHECK_EQUAL_STRING(a_two.data, "two");
+	CTME_CHECK(o_two->arg->specified);
+	CTME_CHECK_EQUAL_STRING(o_two->arg->data, "two");
 	CTME_CHECK(o_three->specified == 2);
-	CTME_CHECK(! a_three.specified);
-	CTME_CHECK_NULL(a_three.data);
+	CTME_CHECK(! o_three->arg->specified);
+	CTME_CHECK_NULL(o_three->arg->data);
 
-	free(st);
+	copme_free(st);
 }

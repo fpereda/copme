@@ -29,84 +29,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <ctme/ctme.h>
+#ifndef COPME_GUARD_XFUNCS_H
+#define COPME_GUARD_XFUNCS_H 1
 
-#include <copme/copme.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-#define SIZEOF_ARRAY(a) (sizeof(a)/sizeof(a[0]))
+#if defined(__GNUC__)
+#    define COPME_ATTRIBUTE(x) __attribute__((x))
+#else
+#    define COPME_ATTRIBUTE(x)
+#endif
 
-char *name(void)
+#if defined(__GNUC__)
+#    define likely(a)   __builtin_expect((a), 1)
+#    define unlikely(a) __builtin_expect((a), 0)
+#else
+#    define likely(a)   (a)
+#    define unlikely(a) (a)
+#endif
+
+static COPME_ATTRIBUTE(noreturn) void oom(void)
 {
-	static char n[] = "basic multishort handling";
-	return n;
+	fprintf(stderr, "Oom. Aborting.\n");
+	abort();
 }
 
-int repeat(void)
+static inline void *xmalloc(size_t s)
 {
-	return 1;
+	if (s == 0)
+		return NULL;
+
+	void *p = malloc(s);
+	if (likely(p != NULL))
+		return p;
+
+	oom();
 }
 
-void run_test(void)
+static inline char *xstrdup(const char *c)
 {
-	struct copme_long opts[] = {
-		{"one", 'o', "First opt", COPME_NOARG},
-		{"two", 't', "Second opt", COPME_NOARG},
-		{0, 0, 0, 0, 0}
-	};
+	char *p = strdup(c);
+	if (likely(p != NULL))
+		return p;
 
-	struct copme_group groups[] = {
-		{"Options", "Some options for blablabla", opts},
-		{0, 0, 0}
-	};
-
-	struct copme_long *o_one = copme_option_named(groups, "one");
-	struct copme_long *o_two = copme_option_named(groups, "two");
-
-	CTME_CHECK_NOT_NULL(o_one);
-	CTME_CHECK_NOT_NULL(o_two);
-
-	char *targv[] = {
-		"program",
-		"-ot",
-		NULL
-	};
-	int targc = SIZEOF_ARRAY(targv) - 1;
-
-	struct copme_state *st = copme_init(groups, targc, targv);
-
-	CTME_CHECK_NOT_NULL(st);
-
-	while (! copme_finished(st) && ! copme_error(st))
-		copme_next(st);
-
-	CTME_CHECK(! copme_error(st));
-	CTME_CHECK(copme_finished(st));
-	CTME_CHECK(o_one->specified);
-	CTME_CHECK(o_two->specified);
-
-	copme_free(st);
-
-	char *targv2[] = {
-		"program",
-		"-to",
-		"one",
-		"--two",
-		NULL
-	};
-	int targc2 = SIZEOF_ARRAY(targv2) - 1;
-
-	st = copme_init(groups, targc2, targv2);
-
-	CTME_CHECK(! o_two->specified);
-	CTME_CHECK_NOT_NULL(st);
-
-	while (! copme_finished(st) && ! copme_error(st))
-		copme_next(st);
-
-	CTME_CHECK(! copme_error(st));
-	CTME_CHECK(copme_finished(st));
-	CTME_CHECK(o_one->specified == 1);
-	CTME_CHECK(o_two->specified == 2);
-
-	copme_free(st);
+	oom();
 }
+
+#endif
