@@ -43,37 +43,40 @@ static inline COPME_ATTRIBUTE(noreturn) void oom(void)
 }
 
 struct copme_state *
-copme_init(struct copme_long *opts, int argc, char *argv[])
+copme_init(struct copme_group *groups, int argc, char *argv[])
 {
 	struct copme_state *st = malloc(sizeof(*st));
 	if (!st)
 		oom();
 
-	st->opts = opts;
+	st->groups = groups;
 	st->argc = argc;
 	st->argv = argv;
-	st->curopt = -1;
+	st->curopt = NULL;
 	st->curarg = NULL;
 	st->argind = 0;
 	st->error = 0;
 	st->finished = 0;
 
-	for (struct copme_long *o = st->opts; o->lname; o++) {
-		o->specified = 0;
-		if (o->arg) {
-			o->arg->specified = 0;
-			o->arg->data = NULL;
+	for (struct copme_group *g = st->groups; g->sdesc; g++) {
+		for (struct copme_long *o = g->opts; o->lname; o++) {
+			o->specified = 0;
+			if (o->arg) {
+				o->arg->specified = 0;
+				o->arg->data = NULL;
+			}
 		}
 	}
 
 	return st;
 }
 
-struct copme_long *copme_option_named(struct copme_long *opts, char *lname)
+struct copme_long *copme_option_named(struct copme_group *groups, char *lname)
 {
-	for (struct copme_long *o = opts; o->lname; o++)
-		if (strcmp(o->lname, lname) == 0)
-			return o;
+	for (struct copme_group *g = groups; g->sdesc; g++)
+		for (struct copme_long *o = g->opts; o->lname; o++)
+			if (strcmp(o->lname, lname) == 0)
+				return o;
 	return NULL;
 }
 
@@ -84,24 +87,27 @@ void copme_usage(struct copme_state *st, void (*pre)(void), void (*post)(void))
 	if (pre)
 		pre();
 
-	printf("Options:\n");
-	for (struct copme_long *o = st->opts; o->lname; o++) {
-		unsigned totlen = 0;
-		totlen += 4;
-		totlen += strlen(o->lname);
-		if (o->sname != 0)
+	for (struct copme_group *g = st->groups; g->sdesc; g++) {
+		printf("%s:\n", g->sdesc);
+		for (struct copme_long *o = g->opts; o->lname; o++) {
+			unsigned totlen = 0;
 			totlen += 4;
-		printf("  --%s", o->lname);
-		if (o->sname != 0)
-			printf(", -%c", o->sname);
-		unsigned n = desc - totlen;
-		if (totlen >= desc) {
-			n = desc;
-			putchar('\n');
+			totlen += strlen(o->lname);
+			if (o->sname != 0)
+				totlen += 4;
+			printf("  --%s", o->lname);
+			if (o->sname != 0)
+				printf(", -%c", o->sname);
+			unsigned n = desc - totlen;
+			if (totlen >= desc) {
+				n = desc;
+				putchar('\n');
+			}
+			while (n--)
+				putchar(' ');
+			printf("%s\n", o->desc ? o->desc : "No help available.");
 		}
-		while (n--)
-			putchar(' ');
-		printf("%s\n", o->desc ? o->desc : "No help available.");
+		putchar('\n');
 	}
 
 	if (post)

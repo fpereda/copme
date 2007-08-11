@@ -60,15 +60,20 @@ void run_test(void)
 		{0, 0, 0, 0, 0}
 	};
 
-	struct copme_long *o_help = copme_option_named(opts, "help");
-	struct copme_long *o_multi = copme_option_named(opts, "multi");
-	struct copme_long *o_optional = copme_option_named(opts, "optional");
+	struct copme_group groups[] = {
+		{"Options", "Some options blabla", opts},
+		{0, 0, 0}
+	};
+
+	struct copme_long *o_help = copme_option_named(groups, "help");
+	struct copme_long *o_multi = copme_option_named(groups, "multi");
+	struct copme_long *o_optional = copme_option_named(groups, "optional");
 
 	CTME_CHECK_NOT_NULL(o_help);
 	CTME_CHECK_NOT_NULL(o_multi);
 	CTME_CHECK_NOT_NULL(o_optional);
 
-	struct copme_long *o_nothing = copme_option_named(opts, "idonotexist");
+	struct copme_long *o_nothing = copme_option_named(groups, "idonotexist");
 
 	CTME_CHECK_NULL(o_nothing);
 
@@ -77,7 +82,7 @@ void run_test(void)
 		"something",
 		NULL
 	};
-	struct copme_state *st = copme_init(opts, targc, targv);
+	struct copme_state *st = copme_init(groups, targc, targv);
 
 	CTME_CHECK_NOT_NULL(st);
 

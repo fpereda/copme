@@ -56,8 +56,13 @@ void run_test(void)
 		{0, 0, 0, 0, 0}
 	};
 
-	struct copme_long *o_one = copme_option_named(opts, "one");
-	struct copme_long *o_two = copme_option_named(opts, "two");
+	struct copme_group groups[] = {
+		{"Options", "Some options", opts},
+		{0, 0, 0}
+	};
+
+	struct copme_long *o_one = copme_option_named(groups, "one");
+	struct copme_long *o_two = copme_option_named(groups, "two");
 
 	CTME_CHECK_NOT_NULL(o_one);
 	CTME_CHECK_NOT_NULL(o_two);
@@ -71,7 +76,7 @@ void run_test(void)
 	};
 	int targc = SIZEOF_ARRAY(targv) - 1;
 
-	struct copme_state *st = copme_init(opts, targc, targv);
+	struct copme_state *st = copme_init(groups, targc, targv);
 
 	CTME_CHECK_NOT_NULL(st);
 
@@ -94,7 +99,7 @@ void run_test(void)
 	};
 	int targc2 = SIZEOF_ARRAY(targv2) - 1;
 
-	st = copme_init(opts, targc2, targv2);
+	st = copme_init(groups, targc2, targv2);
 
 	CTME_CHECK(! o_two->specified);
 	CTME_CHECK_NOT_NULL(st);
@@ -121,7 +126,7 @@ void run_test(void)
 	};
 	int targc3 = SIZEOF_ARRAY(targv3) - 1;
 
-	st = copme_init(opts, targc3, targv3);
+	st = copme_init(groups, targc3, targv3);
 
 	CTME_CHECK(! o_two->specified);
 	CTME_CHECK_NOT_NULL(st);

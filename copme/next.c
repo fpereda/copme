@@ -49,7 +49,7 @@ void copme_next(struct copme_state *state)
 		return;
 
 	state->argind++;
-	state->curopt = -1;
+	state->curopt = NULL;
 	state->curarg = NULL;
 
 	if (copme_finished(state))
@@ -87,41 +87,43 @@ void copme_next(struct copme_state *state)
 	else
 		nextarg = paramornull(state->argv[state->argind + 1]);
 
-	for (struct copme_long *o = state->opts; o->lname; o++) {
-		if (curarg && strncmp(o->lname, curarg, lencmp) != 0)
-			continue;
-		if (shortopt && shortopt != o->sname)
-			continue;
-		if (multishort && *multishort != o->sname)
-			continue;
+	for (struct copme_group *g = state->groups; g->sdesc; g++) {
+		for (struct copme_long *o = g->opts; o->lname; o++) {
+			if (curarg && strncmp(o->lname, curarg, lencmp) != 0)
+				continue;
+			if (shortopt && shortopt != o->sname)
+				continue;
+			if (multishort && *multishort != o->sname)
+				continue;
 
-		o->specified++;
-		state->curopt = o - state->opts;
+			o->specified++;
+			state->curopt = o;
 
-		if (o->arg_kind == COPME_NOARG)
-			state->curarg = NULL;
-		else if (o->arg_kind == COPME_OPTARG && nextarg)
-			state->curarg = nextarg;
-		else if (o->arg_kind == COPME_HASARG) {
-			if (!nextarg)
-				goto needarg;
-			state->curarg = nextarg;
+			if (o->arg_kind == COPME_NOARG)
+				state->curarg = NULL;
+			else if (o->arg_kind == COPME_OPTARG && nextarg)
+				state->curarg = nextarg;
+			else if (o->arg_kind == COPME_HASARG) {
+				if (!nextarg)
+					goto needarg;
+				state->curarg = nextarg;
+			}
+
+			if ((o->arg_kind == COPME_HASARG || o->arg_kind == COPME_OPTARG)
+					&& nextarg && ! equal)
+				state->argind++;
+
+			if (o->arg != NULL) {
+				o->arg->specified = (state->curarg != NULL);
+				o->arg->data = state->curarg;
+			}
+
+			if (multishort && *(++multishort))
+				/* 'o++' will give us g->opts when we enter the loop. */
+				o = g->opts - 1;
+			else
+				return;
 		}
-
-		if ((o->arg_kind == COPME_HASARG || o->arg_kind == COPME_OPTARG)
-				&& nextarg && ! equal)
-			state->argind++;
-
-		if (o->arg != NULL) {
-			o->arg->specified = (state->curarg != NULL);
-			o->arg->data = state->curarg;
-		}
-
-		if (multishort && *(++multishort))
-			/* 'o++' will give us state->opts when we enter the loop. */
-			o = state->opts - 1;
-		else
-			return;
 	}
 
 	if (curarg)

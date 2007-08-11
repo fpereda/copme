@@ -56,22 +56,28 @@ struct copme_long {
 	unsigned specified;
 };
 
+struct copme_group {
+	char *sdesc;
+	char *ldesc;
+	struct copme_long *opts;
+};
+
 struct copme_state {
 	unsigned argind;
 	int argc;
 	char **argv;
-	struct copme_long *opts;
+	struct copme_group *groups;
 	char *curarg;
-	unsigned curopt;
+	struct copme_long *curopt;
 	unsigned finished : 1;
 	unsigned error    : 1;
 };
 
 struct copme_long *
-copme_option_named(struct copme_long *opts, char *lname);
+copme_option_named(struct copme_group *groups, char *lname);
 
 struct copme_state *
-copme_init(struct copme_long opts[], int argc, char *argv[]);
+copme_init(struct copme_group groups[], int argc, char *argv[]);
 
 void copme_next(struct copme_state *st);
 void copme_usage(struct copme_state *st,
@@ -87,17 +93,7 @@ static inline unsigned copme_error(struct copme_state *st)
 	return st->error;
 }
 
-static inline char *copme_current_long(struct copme_state *st)
-{
-	return st->opts[st->curopt].lname;
-}
-
-static inline char copme_current_short(struct copme_state *st)
-{
-	return st->opts[st->curopt].sname;
-}
-
-static inline unsigned copme_current_opt(struct copme_state *st)
+static inline struct copme_long *copme_current_opt(struct copme_state *st)
 {
 	return st->curopt;
 }
