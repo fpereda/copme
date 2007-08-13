@@ -89,6 +89,18 @@ AC_MSG_RESULT([${cflags_message}])
 AC_SUBST([LSYS_CFLAGS])
 dnl }}}
 
+dnl {{{ pkg-config
+PKG_PROG_PKG_CONFIG([0.9.0])
+COPME_PC_CFLAGS=
+COPME_PC_LIBS="-lcopme"
+COPME_PC_VERSION="${VERSION_FULL}"
+COPME_PC_SLOT="${VERSION_MAJOR}.${VERSION_MINOR}"
+AC_SUBST([COPME_PC_CFLAGS])
+AC_SUBST([COPME_PC_LIBS])
+AC_SUBST([COPME_PC_VERSION])
+AC_SUBST([COPME_PC_SLOT])
+dnl }}}
+
 dnl {{{ output
 AC_CONFIG_HEADER(config.h)
 AC_OUTPUT(
@@ -96,5 +108,6 @@ AC_OUTPUT(
 		  copme/Makefile
 		  copme/test/Makefile
 		  ctme/Makefile
+		  pkg-config/Makefile
 		  )
 dnl }}}

@@ -1,0 +1,10 @@
+prefix=@COPME_PC_PREFIX@
+exec_prefix=${prefix}
+libdir=@COPME_PC_LIBDIR@
+includedir=@COPME_PC_INCLUDEDIR@
+
+Name: Copme
+Description: C Option Parsing Made Easy
+Version: @COPME_PC_VERSION@
+Libs: -L${libdir} @COPME_PC_LIBS@
+Cflags: -I${includedir} @COPME_PC_CFLAGS@
