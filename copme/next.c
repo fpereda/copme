@@ -35,6 +35,7 @@
 #include <string.h>
 
 #include "copme.h"
+#include "xfuncs.h"
 
 static inline char *paramornull(char *s)
 {
@@ -67,10 +68,16 @@ void copme_next(struct copme_state *state)
 	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] != '-')
 		multishort = rawarg + 1;
 
-	/* This is neither a short nor a long option */
-	/* FIXME: Should store these pointers... */
-	if (curarg == NULL && shortopt == 0 && multishort == NULL)
+	/* This is neither a short nor a long nor a multishort option. */
+	if (!curarg && shortopt == 0 && !multishort) {
+		struct copme_nopts *nopts = &state->nopts;
+		if (nopts->count >= nopts->size) {
+			nopts->size *= COPME_NOPTV_GROWTH_RATE;
+			nopts->noptv = xrealloc(nopts->noptv, nopts->size);
+		}
+		nopts->noptv[nopts->count++] = rawarg;
 		return;
+	}
 
 	char *equal = NULL;
 	if (curarg)
@@ -113,7 +120,7 @@ void copme_next(struct copme_state *state)
 				&& nextarg && ! equal)
 			state->argind++;
 
-		if (o->arg != NULL) {
+		if (o->arg) {
 			o->arg->specified = (arg_data != NULL);
 			o->arg->data = arg_data;
 		}

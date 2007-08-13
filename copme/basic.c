@@ -39,10 +39,11 @@
 
 void copme_free(struct copme_state *st)
 {
-	copme_foreach_group_option(st, g, o) {
+	copme_foreach_group_option(st, g, o)
 		if (o->arg)
 			free(o->arg);
-	}
+	if (st->nopts.noptv)
+		free(st->nopts.noptv);
 	free(st);
 }
 
@@ -58,6 +59,10 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 	st->argind = 0;
 	st->error = 0;
 	st->finished = 0;
+
+	st->nopts.count = 0;
+	st->nopts.size = 10;
+	st->nopts.noptv = xmalloc(st->nopts.size * sizeof(*st->nopts.noptv));
 
 	copme_foreach_group_option(st, g, o) {
 		o->specified = 0;

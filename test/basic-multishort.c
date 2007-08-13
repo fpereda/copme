@@ -107,6 +107,8 @@ void run_test(void)
 	CTME_CHECK(copme_finished(st));
 	CTME_CHECK(o_one->specified == 1);
 	CTME_CHECK(o_two->specified == 2);
+	CTME_CHECK(copme_nopts(st)->count == 1);
+	CTME_CHECK_EQUAL_STRING(copme_nopts(st)->noptv[0], "one");
 
 	copme_free(st);
 }

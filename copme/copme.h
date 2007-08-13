@@ -42,6 +42,8 @@
 	copme_foreach_group(s, g) \
 		copme_foreach_option(g, o)
 
+#define COPME_NOPTV_GROWTH_RATE (2.5)
+
 struct copme_arg {
 	char *data;
 	unsigned specified : 1;
@@ -66,10 +68,17 @@ struct copme_group {
 	struct copme_long *opts;
 };
 
+struct copme_nopts {
+	unsigned count;
+	char **noptv;
+	size_t size;
+};
+
 struct copme_state {
 	int argc;
 	char **argv;
 	unsigned argind;
+	struct copme_nopts nopts;
 	struct copme_group *groups;
 	struct copme_long *curopt;
 	unsigned finished : 1;
@@ -100,6 +109,11 @@ static inline unsigned copme_error(struct copme_state *st)
 static inline struct copme_long *copme_current_opt(struct copme_state *st)
 {
 	return st->curopt;
+}
+
+static inline struct copme_nopts *copme_nopts(struct copme_state *st)
+{
+	return &st->nopts;
 }
 
 #endif

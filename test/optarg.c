@@ -151,6 +151,7 @@ void run_test(void)
 	CTME_CHECK(o_three->specified);
 	CTME_CHECK(o_three->arg->specified);
 	CTME_CHECK_EQUAL_STRING(o_three->arg->data, "gulp");
+	CTME_CHECK(copme_nopts(st)->count == 0);
 
 	copme_free(st);
 
@@ -184,6 +185,7 @@ void run_test(void)
 	CTME_CHECK(o_three->specified == 2);
 	CTME_CHECK(! o_three->arg->specified);
 	CTME_CHECK_NULL(o_three->arg->data);
+	CTME_CHECK(copme_nopts(st)->count == 0);
 
 	copme_free(st);
 }
