@@ -106,8 +106,8 @@ AC_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 		  Makefile
 		  copme/Makefile
-		  copme/test/Makefile
 		  ctme/Makefile
+		  test/Makefile
 		  pkg-config/Makefile
 		  )
 dnl }}}

@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CFLAGS = @LSYS_CFLAGS@ -std=c99 -D_XOPEN_SOURCE=600
 
-SUBDIRS = . test
+SUBDIRS = .
 
 lib_LTLIBRARIES = libcopme.la
 
