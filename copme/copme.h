@@ -67,11 +67,10 @@ struct copme_group {
 };
 
 struct copme_state {
-	unsigned argind;
 	int argc;
 	char **argv;
+	unsigned argind;
 	struct copme_group *groups;
-	char *curarg;
 	struct copme_long *curopt;
 	unsigned finished : 1;
 	unsigned error    : 1;
@@ -84,7 +83,6 @@ struct copme_state *
 copme_init(struct copme_group groups[], int argc, char *argv[]);
 
 void copme_free(struct copme_state *st);
-
 void copme_next(struct copme_state *st);
 void copme_usage(struct copme_state *st,
 		void (*pre)(void), void (*post)(void));
@@ -102,11 +100,6 @@ static inline unsigned copme_error(struct copme_state *st)
 static inline struct copme_long *copme_current_opt(struct copme_state *st)
 {
 	return st->curopt;
-}
-
-static inline char *copme_arg(struct copme_state *st)
-{
-	return st->curarg;
 }
 
 #endif

@@ -50,7 +50,6 @@ void copme_next(struct copme_state *state)
 
 	state->argind++;
 	state->curopt = NULL;
-	state->curarg = NULL;
 
 	if (copme_finished(state))
 		return;
@@ -98,14 +97,16 @@ void copme_next(struct copme_state *state)
 		o->specified++;
 		state->curopt = o;
 
+		char *arg_data = NULL;
+
 		if (o->arg_kind == COPME_NOARG)
-			state->curarg = NULL;
+			arg_data = NULL;
 		else if (o->arg_kind == COPME_OPTARG && nextarg)
-			state->curarg = nextarg;
+			arg_data = nextarg;
 		else if (o->arg_kind == COPME_HASARG) {
 			if (!nextarg)
 				goto needarg;
-			state->curarg = nextarg;
+			arg_data = nextarg;
 		}
 
 		if ((o->arg_kind == COPME_HASARG || o->arg_kind == COPME_OPTARG)
@@ -113,8 +114,8 @@ void copme_next(struct copme_state *state)
 			state->argind++;
 
 		if (o->arg != NULL) {
-			o->arg->specified = (state->curarg != NULL);
-			o->arg->data = state->curarg;
+			o->arg->specified = (arg_data != NULL);
+			o->arg->data = arg_data;
 		}
 
 		if (multishort && *(++multishort))

@@ -55,7 +55,6 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 	st->argc = argc;
 	st->argv = argv;
 	st->curopt = NULL;
-	st->curarg = NULL;
 	st->argind = 0;
 	st->error = 0;
 	st->finished = 0;
