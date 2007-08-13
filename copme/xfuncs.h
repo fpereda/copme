@@ -50,31 +50,34 @@
 #    define unlikely(a) (a)
 #endif
 
-static COPME_ATTRIBUTE(noreturn) void oom(void)
+static COPME_ATTRIBUTE(noreturn) void oom(const char *s)
 {
-	fprintf(stderr, "Oom. Aborting.\n");
-	abort();
+	fprintf(stderr, "Oom. %s\n", s);
+	exit(100);
 }
 
 static inline void *xmalloc(size_t s)
 {
-	if (s == 0)
-		return NULL;
+	void *p = malloc(s ? s : 1);
+	if (unlikely(!p))
+		oom("malloc failed.");
+	return p;
+}
 
-	void *p = malloc(s);
-	if (likely(p != NULL))
-		return p;
-
-	oom();
+static inline void *xrealloc(void *p, size_t s)
+{
+	void *ret = realloc(p, s ? s : 1);
+	if (unlikely(!ret))
+		oom("realloc failed.");
+	return ret;
 }
 
 static inline char *xstrdup(const char *c)
 {
 	char *p = strdup(c);
-	if (likely(p != NULL))
-		return p;
-
-	oom();
+	if (unlikely(!p))
+		oom("strdup failed");
+	return p;
 }
 
 #endif
