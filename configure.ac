@@ -33,9 +33,21 @@ AC_STDC_HEADERS
 AC_PROG_MAKE_SET
 dnl }}}
 
+dnl {{{ doxygen
+AC_MSG_CHECKING([whether to enable doxygen])
+AC_ARG_ENABLE([doxygen],
+			  AS_HELP_STRING([--enable-doxygen], [Enable 'make doxygen' (developer docs)]),
+			  [HAVE_DOXYGEN=$enableval
+			   AC_MSG_RESULT([$enableval])],
+			   [AC_MSG_RESULT([autodetect])
+			   AC_CHECK_PROG(HAVE_DOXYGEN, [doxygen], [yes], [no])])
+AC_SUBST([HAVE_DOXYGEN])
+AM_CONDITIONAL([HAVE_DOXYGEN], test "x$HAVE_DOXYGEN" = "xyes")
+dnl }}}
+
 dnl {{{ Info about this build
-dnl GENERATED_FILE=misc/generated-file.txt
-dnl AC_SUBST_FILE(GENERATED_FILE)
+GENERATED_FILE=misc/generated-file.txt
+AC_SUBST_FILE(GENERATED_FILE)
 
 BUILDUSER=`whoami`
 AC_SUBST([BUILDUSER])
@@ -105,6 +117,8 @@ dnl {{{ output
 AC_CONFIG_HEADER(config.h)
 AC_OUTPUT(
 		  Makefile
+		  doc/doxygen.conf
+		  doc/Makefile
 		  copme/Makefile
 		  ctme/Makefile
 		  test/Makefile
