@@ -16,7 +16,8 @@ TESTS = \
 	basic-no-arg \
 	hasarg \
 	optarg \
-	basic-multishort
+	basic-multishort \
+	nopts
 
 check_PROGRAMS = $(TESTS)
 
