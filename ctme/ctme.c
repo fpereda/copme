@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/time.h>
 
 #include "ctme.h"
 
@@ -47,27 +48,30 @@ void CTME_ERR(const char *fmt, ...)
 	ctme_ntests++;
 }
 
-int main(int argc, char *argv[])
+static void do_run_test(const char *tit)
 {
+	struct timeval tv_pre;
+	struct timeval tv_post;
 	ctme_err = 0;
 	ctme_ntests = 0;
+	printf("%s: ", tit);
+	gettimeofday(&tv_pre, NULL);
+	run_test();
+	gettimeofday(&tv_post, NULL);
+	const unsigned long ms =
+		((tv_post.tv_sec - tv_pre.tv_sec) * 1000) +
+		((tv_post.tv_usec - tv_pre.tv_usec) / 1000);
+	printf("%sOK (%ldms)\n", ctme_err ? " NOT " : " ", ms);
+}
 
+int main(int argc, char *argv[])
+{
 	setbuf(stdout, 0);
 
-	printf("%s: ", name());
+	do_run_test(name());
 
-	run_test();
-
-	printf("%sOK", ctme_err ? " NOT " : " ");
-
-	if (repeat()) {
-		ctme_ntests = 0;
-		printf("\n (repeat): ");
-		run_test();
-		printf("%sOK", ctme_err ? " NOT " : " ");
-	}
-
-	putchar('\n');
+	if (!ctme_err && repeat())
+		do_run_test("(repeat)");
 
 	return ctme_err;
 }
