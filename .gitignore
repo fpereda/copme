@@ -1,3 +1,6 @@
+copme-*.tar.gz
+tags
+
 # Typical C products
 *.o
 *.a
