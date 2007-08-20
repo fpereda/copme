@@ -71,9 +71,12 @@ void copme_next(struct copme_state *state)
 	/* This is neither a short nor a long nor a multishort option. */
 	if (!curarg && shortopt == 0 && !multishort) {
 		struct copme_nopts *nopts = &state->nopts;
-		if (nopts->count >= nopts->size) {
+		if (nopts->noptv == NULL)
+			nopts->noptv = xmalloc(nopts->size * sizeof(*nopts->noptv));
+		else if (nopts->count >= nopts->size) {
 			nopts->size *= COPME_NOPTV_GROWTH_RATE;
-			nopts->noptv = xrealloc(nopts->noptv, nopts->size);
+			nopts->noptv = xrealloc(nopts->noptv,
+					nopts->size * sizeof(*nopts->noptv));
 		}
 		nopts->noptv[nopts->count++] = rawarg;
 		return;

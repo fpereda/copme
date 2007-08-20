@@ -62,7 +62,7 @@ copme_init(struct copme_group *groups, int argc, char *argv[])
 
 	st->nopts.count = 0;
 	st->nopts.size = 10;
-	st->nopts.noptv = xmalloc(st->nopts.size * sizeof(*st->nopts.noptv));
+	st->nopts.noptv = NULL;
 
 	copme_foreach_group_option(st, g, o) {
 		o->specified = 0;

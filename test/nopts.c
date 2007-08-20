@@ -130,4 +130,45 @@ void run_test(void)
 	CTME_CHECK_EQUAL_STRING(copme_nopts(st)->noptv[0], "foo");
 
 	copme_free(st);
+
+	char *targv3[] = {
+		"program",
+		"one",
+		"two",
+		"three",
+		"four",
+		"five",
+		"six",
+		"seven",
+		"eight",
+		"nine",
+		"ten",
+		"realloc here",
+		"foo",
+		"bar",
+		"baz",
+		"frob",
+		"nitz",
+		NULL
+	};
+	int targc3 = SIZEOF_ARRAY(targv3) - 1;
+
+	st = copme_init(groups, targc3, targv3);
+
+	CTME_CHECK(! o_two->specified);
+	CTME_CHECK_NOT_NULL(st);
+
+	while (! copme_finished(st) && ! copme_error(st))
+		copme_next(st);
+
+	CTME_CHECK(! copme_error(st));
+	CTME_CHECK(copme_finished(st));
+	CTME_CHECK(! o_one->specified);
+	CTME_CHECK(! o_two->specified );
+	CTME_CHECK(! o_three->specified);
+
+	for (unsigned i = 1; i < targc3; i++)
+		CTME_CHECK_EQUAL_STRING(copme_nopts(st)->noptv[i - 1], targv3[i]);
+
+	copme_free(st);
 }
