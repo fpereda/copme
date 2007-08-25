@@ -86,13 +86,10 @@ static void report_needarg(
 
 void copme_next(struct copme_state *state)
 {
-	if (copme_finished(state) || copme_error(state))
-		return;
-
 	state->argind++;
 	state->curopt = NULL;
 
-	if (copme_finished(state))
+	if (copme_finished(state) || copme_error(state))
 		return;
 
 	char *rawarg = state->argv[state->argind];
