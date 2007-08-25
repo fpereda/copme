@@ -56,6 +56,34 @@ static void handle_nopt(struct copme_nopts *nopts, char *o)
 	nopts->noptv[nopts->count++] = o;
 }
 
+static void report_unknown(
+		struct copme_state *st, const char *curarg,
+		const char *multishort, char shortopt)
+{
+	if (curarg)
+		fprintf(stderr, "Unknown long option '%s'\n", curarg);
+	else if (multishort)
+		fprintf(stderr,
+				"Unknown short option '%c'(%d). Part of multishort.\n",
+				*multishort, *multishort);
+	else
+		fprintf(stderr, "Unknown short option '%c'\n", shortopt);
+	st->error = 1;
+}
+
+static void report_needarg(
+		struct copme_state *st, const char *curarg,
+		const char *multishort, char shortopt)
+{
+	if (curarg)
+		fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
+	else
+		fprintf(stderr, "Option '%c' needs an argument.\n",
+				multishort ? *multishort : shortopt);
+	st->error = 1;
+}
+
+
 void copme_next(struct copme_state *state)
 {
 	if (copme_finished(state) || copme_error(state))
@@ -118,7 +146,7 @@ void copme_next(struct copme_state *state)
 			arg_data = nextarg;
 		else if (o->arg_kind == COPME_HASARG) {
 			if (!nextarg)
-				goto needarg;
+				report_needarg(state, curarg, multishort, shortopt);
 			arg_data = nextarg;
 		}
 
@@ -138,21 +166,5 @@ void copme_next(struct copme_state *state)
 			return;
 	}
 
-	if (curarg)
-		fprintf(stderr, "Unknown long option '%s'\n", curarg);
-	else if (multishort)
-		fprintf(stderr,
-				"Unknown short option '%c'(%d). Part of multishort.\n",
-				*multishort, *multishort);
-	else
-		fprintf(stderr, "Unknown short option '%c'\n", shortopt);
-	goto err;
-needarg:
-	if (curarg)
-		fprintf(stderr, "Option '%s' needs an argument.\n", curarg);
-	else
-		fprintf(stderr, "Option '%c' needs an argument.\n", shortopt);
-	goto err;
-err:
-	state->error = 1;
+	report_unknown(state, curarg, multishort, shortopt);
 }
