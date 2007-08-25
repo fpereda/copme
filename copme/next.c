@@ -44,6 +44,18 @@ static inline char *paramornull(char *s)
 	return s;
 }
 
+static void handle_nopt(struct copme_nopts *nopts, char *o)
+{
+	if (nopts->noptv == NULL)
+		nopts->noptv = xmalloc(nopts->size * sizeof(*nopts->noptv));
+	else if (nopts->count >= nopts->size) {
+		nopts->size *= COPME_NOPTV_GROWTH_RATE;
+		nopts->noptv = xrealloc(nopts->noptv,
+				nopts->size * sizeof(*nopts->noptv));
+	}
+	nopts->noptv[nopts->count++] = o;
+}
+
 void copme_next(struct copme_state *state)
 {
 	if (copme_finished(state) || copme_error(state))
@@ -68,17 +80,8 @@ void copme_next(struct copme_state *state)
 	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] != '-')
 		multishort = rawarg + 1;
 
-	/* This is neither a short nor a long nor a multishort option. */
 	if (!curarg && shortopt == 0 && !multishort) {
-		struct copme_nopts *nopts = &state->nopts;
-		if (nopts->noptv == NULL)
-			nopts->noptv = xmalloc(nopts->size * sizeof(*nopts->noptv));
-		else if (nopts->count >= nopts->size) {
-			nopts->size *= COPME_NOPTV_GROWTH_RATE;
-			nopts->noptv = xrealloc(nopts->noptv,
-					nopts->size * sizeof(*nopts->noptv));
-		}
-		nopts->noptv[nopts->count++] = rawarg;
+		handle_nopt(copme_nopts(state), rawarg);
 		return;
 	}
 
