@@ -204,4 +204,16 @@ static inline struct copme_nopts *copme_nopts(struct copme_state *st)
 	return &st->nopts;
 }
 
+/**
+ * Get extra params for a parser.
+ *
+ * @param st Parser in finished state.
+ * @return Index of the first extra param (<tt>argv[index]</tt> might be
+ * <tt>NULL</tt> if the last argument is <tt>--</tt>).
+ */
+static inline unsigned copme_extra(struct copme_state *st)
+{
+	return st->argind < 1 ? 1 : st->argind;
+}
+
 #endif

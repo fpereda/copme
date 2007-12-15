@@ -100,7 +100,10 @@ void copme_next(struct copme_state *state)
 
 	if (lenraw == 2 && rawarg[0] == '-' && rawarg[1] != '-')
 		shortopt = rawarg[1];
-	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] == '-')
+	else if (lenraw == 2 && rawarg[0] == '-' && rawarg[1] == '-') {
+		state->finished = 1;
+		state->argind++;
+	} else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] == '-')
 		curarg = rawarg + 2;
 	else if (lenraw > 2 && rawarg[0] == '-' && rawarg[1] != '-')
 		multishort = rawarg + 1;

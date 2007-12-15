@@ -77,6 +77,7 @@ void run_test(void)
 		"something",
 		NULL
 	};
+
 	struct copme_state *st = copme_init(groups, targc, targv);
 
 	CTME_CHECK_NOT_NULL(st);
@@ -88,6 +89,73 @@ void run_test(void)
 		CTME_CHECK_EQUAL(o->arg->specified, 0);
 		CTME_CHECK_NULL(o->arg->data);
 	}
+
+	CTME_CHECK_EQUAL(copme_extra(st), 1);
+	CTME_CHECK_NULL(targv[copme_extra(st)]);
+
+	copme_free(st);
+
+	int targc2 = 6;
+	char *targv2[] = {
+		"something",
+		"--optional",
+		"-a",
+		"bleh",
+		"--",
+		"foo",
+		NULL
+	};
+
+	st = copme_init(groups, targc2, targv2);
+
+	CTME_CHECK_NOT_NULL(st);
+
+	while (! copme_finished(st))
+		copme_next(st);
+
+	CTME_CHECK_EQUAL(copme_extra(st), 5);
+	CTME_CHECK_EQUAL_STRING(targv2[copme_extra(st)], "foo");
+
+	copme_free(st);
+
+	int targc3 = 2;
+	char *targv3[] = {
+		"something",
+		"--",
+		NULL
+	};
+
+	st = copme_init(groups, targc3, targv3);
+
+	CTME_CHECK_NOT_NULL(st);
+
+	while (! copme_finished(st))
+		copme_next(st);
+
+	CTME_CHECK_EQUAL(copme_extra(st), 2);
+	CTME_CHECK_NULL(targv3[copme_extra(st)]);
+
+	copme_free(st);
+
+	int targc4 = 5;
+	char *targv4[] = {
+		"something",
+		"--optional",
+		"-a",
+		"bleh",
+		"foo",
+		NULL
+	};
+
+	st = copme_init(groups, targc4, targv4);
+
+	CTME_CHECK_NOT_NULL(st);
+
+	while (! copme_finished(st))
+		copme_next(st);
+
+	CTME_CHECK_EQUAL(copme_extra(st), 5);
+	CTME_CHECK_NULL(targv4[copme_extra(st)]);
 
 	copme_free(st);
 }
